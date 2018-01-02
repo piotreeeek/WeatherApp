@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">WeatherApp</string>
     <string name="city_variable_name">city</string>
-    <string name="error">Brak miasta</string>
     <string name="error_dl_weather">Błąd pobierania pogody</string>
     <string name="city_name">Miasto:</string>
     <string name="city_weather">Pogoda:</string>

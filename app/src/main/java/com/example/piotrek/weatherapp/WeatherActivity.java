@@ -2,8 +2,8 @@ package com.example.piotrek.weatherapp;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -12,21 +12,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class WeatherActivity extends AppCompatActivity {
 
-    JSONObject data = null;
-    TextView cityName = null;
-    TextView cityTemp = null;
-    TextView cityWeather = null;
-    TextView cityHumidity = null;
-    TextView cityPressure = null;
-    TextView cityWind = null;
+    private JSONObject data = null;
+    private TextView cityTemp = null;
+    private TextView cityWeather = null;
+    private TextView cityHumidity = null;
+    private TextView cityPressure = null;
+    private TextView cityWind = null;
 
 
     @Override
@@ -36,7 +33,7 @@ public class WeatherActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-        cityName = findViewById(R.id.city_name);
+        TextView cityName = findViewById(R.id.city_name);
         cityTemp = findViewById(R.id.city_temp);
         cityWeather = findViewById(R.id.city_weather);
         cityHumidity = findViewById(R.id.city_humidity);
@@ -51,16 +48,10 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public void getJSON(final String city) {
+    private void getJSON(final String city) {
 
         new AsyncTask<Void, Void, Void>() {
 
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-
-            }
 
             @Override
             protected Void doInBackground(Void... params) {
@@ -72,8 +63,8 @@ public class WeatherActivity extends AppCompatActivity {
                     BufferedReader reader =
                             new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-                    StringBuffer json = new StringBuffer(1024);
-                    String tmp = "";
+                    StringBuilder json = new StringBuilder(1024);
+                    String tmp;
 
                     while ((tmp = reader.readLine()) != null)
                         json.append(tmp).append("\n");
