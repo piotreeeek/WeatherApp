@@ -1,0 +1,7 @@
+<resources>
+    <string-array name="cities">
+        <item>Warszawa</item>
+        <item>Kraków</item>
+        <item>Lublin</item>
+    </string-array>
+</resources>
