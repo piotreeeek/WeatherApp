@@ -7,37 +7,43 @@
 
     <TextView
         android:id="@+id/city_name"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/city_icon"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@id/city_name"/>
 
     <TextView
         android:id="@+id/city_temp"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_below="@id/city_name" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/city_icon" />
 
     <TextView
         android:id="@+id/city_weather"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/city_temp" />
 
     <TextView
         android:id="@+id/city_humidity"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/city_weather" />
 
     <TextView
         android:id="@+id/city_pressure"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/city_humidity" />
 
     <TextView
         android:id="@+id/city_wind"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/city_pressure" />
 
 </RelativeLayout>

@@ -1,11 +1,13 @@
 package com.example.piotrek.weatherapp;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,12 +20,13 @@ import java.net.URL;
 
 public class WeatherActivity extends AppCompatActivity {
 
-    private JSONObject data = null;
     private TextView cityTemp = null;
+    private ImageView cityIcon = null;
     private TextView cityWeather = null;
     private TextView cityHumidity = null;
     private TextView cityPressure = null;
     private TextView cityWind = null;
+    private static final String IMG_URL = "http://openweathermap.org/img/w/";
 
 
     @Override
@@ -34,80 +37,119 @@ public class WeatherActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
 
         TextView cityName = findViewById(R.id.city_name);
+        cityIcon = findViewById(R.id.city_icon);
         cityTemp = findViewById(R.id.city_temp);
         cityWeather = findViewById(R.id.city_weather);
         cityHumidity = findViewById(R.id.city_humidity);
         cityPressure = findViewById(R.id.city_pressure);
         cityWind = findViewById(R.id.city_wind);
 
+        assert bundle != null;
         String city = (String) bundle.get(getString(R.string.city_variable_name));
         cityName.setText(getString(R.string.city_name) + " " + city);
 
-        getJSON(city);
+        WeatherDownloader.OnDownloadListener downloadListener = new WeatherDownloader.OnDownloadListener() {
+            @Override
+            public void OnDownloadFinish(JSONObject response) {
+                weatherInfoProcess(response);
+            }
+        };
+
+        WeatherDownloader mTask = new WeatherDownloader(downloadListener, city);
+        mTask.execute();
 
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private void getJSON(final String city) {
+    private void weatherInfoProcess(JSONObject jsonObject) {
 
-        new AsyncTask<Void, Void, Void>() {
+        if (jsonObject != null) {
+            Log.d("my weather received", jsonObject.toString());
+            try {
+                JSONObject mainData = new JSONObject(jsonObject.get("main").toString());
+                JSONArray weatherArray = new JSONArray(jsonObject.get("weather").toString());
+                JSONObject weatherData = new JSONObject(weatherArray.get(0).toString());
+                JSONObject windData = new JSONObject(jsonObject.get("wind").toString());
+
+                Picasso.with(this).load(IMG_URL + weatherData.get("icon").toString() + ".png").into(cityIcon);
+                cityTemp.setText(getString(R.string.city_temp) + " "
+                        + mainData.get("temp").toString() + " " + getString(R.string.degrees));
+                cityWeather.setText(getString(R.string.city_weather) + " "
+                        + weatherData.get("main").toString());
+                cityHumidity.setText(getString(R.string.city_humidity) + " "
+                        + mainData.get("humidity").toString() + " %");
+                cityPressure.setText(getString(R.string.city_pressure) + " "
+                        + mainData.get("pressure").toString() + " " + getString(R.string.hpa));
+                cityWind.setText(getString(R.string.city_wind) + " "
+                        + windData.get("speed").toString() + " " + getString(R.string.wind_unit));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            cityTemp.setText(getText(R.string.error_dl_weather));
+        }
+    }
 
 
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&APPID=609191e92beb5b9b8d10c2124c026211");
+}
 
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+class WeatherDownloader extends AsyncTask<Void, Void, Void> {
 
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    private static final String API_URL = "http://api.openweathermap.org/data/2.5/weather?q=";
+    private static final String API_UNITS_KEY = "&units=metric&APPID=609191e92beb5b9b8d10c2124c026211";
+    private final OnDownloadListener listener;
+    private JSONObject data = null;
+    private final String city;
 
-                    StringBuilder json = new StringBuilder(1024);
-                    String tmp;
+    public WeatherDownloader(OnDownloadListener listener, String city) {
+        this.listener = listener;
+        this.city = city;
+    }
 
-                    while ((tmp = reader.readLine()) != null)
-                        json.append(tmp).append("\n");
-                    reader.close();
+    @Override
+    protected Void doInBackground(Void... voids) {
 
-                    data = new JSONObject(json.toString());
+        try {
+            URL url = new URL(API_URL + city + API_UNITS_KEY);
 
-                    if (data.getInt("cod") != 200) {
-                        return null;
-                    }
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-                } catch (Exception e) {
+            StringBuilder json = new StringBuilder(1024);
+            String tmp;
 
-                    System.out.println("Exception " + e.getMessage());
-                    cityTemp.setText(R.string.error_dl_weather);
-                }
+            while ((tmp = reader.readLine()) != null)
+                json.append(tmp).append("\n");
+            reader.close();
 
+            data = new JSONObject(json.toString());
+
+            if (data.getInt("cod") != 200) {
                 return null;
             }
 
-            @Override
-            protected void onPostExecute(Void Void) {
-                if (data != null) {
-                    Log.d("my weather received", data.toString());
-                    try {
-                        JSONObject mainData = new JSONObject(data.get("main").toString());
-                        JSONArray weatherArray = new JSONArray(data.get("weather").toString());
-                        JSONObject weatherData = new JSONObject(weatherArray.get(0).toString());
-                        JSONObject windData = new JSONObject(data.get("wind").toString());
 
-                        cityTemp.setText(getString(R.string.city_temp) + " " + mainData.get("temp").toString() + " " + getString(R.string.degrees));
-                        cityWeather.setText(getString(R.string.city_weather) + " " + weatherData.get("main").toString());
-                        cityHumidity.setText(getString(R.string.city_humidity) + " " + mainData.get("humidity").toString() + " %");
-                        cityPressure.setText(getString(R.string.city_pressure) + " " + mainData.get("pressure").toString() + " " + getString(R.string.hpa));
-                        cityWind.setText(getString(R.string.city_wind) + " " + windData.get("speed").toString() + " " + getString(R.string.wind_unit));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
+        } catch (Exception e) {
 
-            }
-        }.execute();
+            Log.d("Exception ",  e.getMessage());
+        }
+
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void Void) {
+
+        if (listener != null) {
+            listener.OnDownloadFinish(data);
+        }
+
+    }
+
+    protected interface OnDownloadListener {
+        void OnDownloadFinish(JSONObject response);
     }
 }
 
