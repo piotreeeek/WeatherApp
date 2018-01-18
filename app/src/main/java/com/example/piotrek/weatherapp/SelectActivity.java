@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class SelectActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+    public static final String CITY_VARIABLE_NAME = "city";
     private ListView listView;
 
     @Override
@@ -23,7 +24,7 @@ public class SelectActivity extends AppCompatActivity implements AdapterView.OnI
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent();
         intent.setClass(this, WeatherActivity.class);
-        intent.putExtra(getString(R.string.city_variable_name), (String) listView.getItemAtPosition(position));
+        intent.putExtra(CITY_VARIABLE_NAME, (String) listView.getItemAtPosition(position));
         startActivity(intent);
     }
 }

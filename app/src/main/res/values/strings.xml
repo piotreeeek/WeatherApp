@@ -1,14 +1,11 @@
 <resources>
     <string name="app_name">WeatherApp</string>
-    <string name="city_variable_name">city</string>
     <string name="error_dl_weather">Błąd pobierania pogody</string>
-    <string name="city_name">Miasto:</string>
-    <string name="city_weather">Pogoda:</string>
-    <string name="city_humidity">Wilgotność:</string>
-    <string name="city_pressure">Ciśnienie:</string>
-    <string name="city_wind">Prędkość wiatru:</string>
-    <string name="city_temp">Temperatura:</string>
-    <string name="degrees">°C</string>
-    <string name="hpa">hPa</string>
-    <string name="wind_unit">m/s</string>
+    <string name="city_name">Miasto: %s</string>
+    <string name="city_weather">Pogoda: %s</string>
+    <string name="city_humidity" >Wilgotność: %s%%</string>
+    <string name="city_pressure">Ciśnienie: %s hPa</string>
+    <string name="city_wind">Prędkość wiatru: %s m/s</string>
+    <string name="city_temp">Temperatura: %s °C</string>
+    <string name="icon_name">weather icon</string>
 </resources>

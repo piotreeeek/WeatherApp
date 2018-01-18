@@ -1,5 +1,8 @@
 package com.example.piotrek.weatherapp;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,14 +23,13 @@ import java.net.URL;
 
 public class WeatherActivity extends AppCompatActivity {
 
+    private static final String IMG_URL = "http://openweathermap.org/img/w/";
     private TextView cityTemp = null;
     private ImageView cityIcon = null;
     private TextView cityWeather = null;
     private TextView cityHumidity = null;
     private TextView cityPressure = null;
     private TextView cityWind = null;
-    private static final String IMG_URL = "http://openweathermap.org/img/w/";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +47,8 @@ public class WeatherActivity extends AppCompatActivity {
         cityWind = findViewById(R.id.city_wind);
 
         assert bundle != null;
-        String city = (String) bundle.get(getString(R.string.city_variable_name));
-        cityName.setText(getString(R.string.city_name) + " " + city);
+        String city = (String) bundle.get(SelectActivity.CITY_VARIABLE_NAME);
+        cityName.setText(getString(R.string.city_name,  city));
 
         WeatherDownloader.OnDownloadListener downloadListener = new WeatherDownloader.OnDownloadListener() {
             @Override
@@ -62,7 +64,7 @@ public class WeatherActivity extends AppCompatActivity {
 
     private void weatherInfoProcess(JSONObject jsonObject) {
 
-        if (jsonObject != null) {
+        if (jsonObject != null && isNetworkAvailable()) {
             Log.d("my weather received", jsonObject.toString());
             try {
                 JSONObject mainData = new JSONObject(jsonObject.get("main").toString());
@@ -71,25 +73,26 @@ public class WeatherActivity extends AppCompatActivity {
                 JSONObject windData = new JSONObject(jsonObject.get("wind").toString());
 
                 Picasso.with(this).load(IMG_URL + weatherData.get("icon").toString() + ".png").into(cityIcon);
-                cityTemp.setText(getString(R.string.city_temp) + " "
-                        + mainData.get("temp").toString() + " " + getString(R.string.degrees));
-                cityWeather.setText(getString(R.string.city_weather) + " "
-                        + weatherData.get("main").toString());
-                cityHumidity.setText(getString(R.string.city_humidity) + " "
-                        + mainData.get("humidity").toString() + " %");
-                cityPressure.setText(getString(R.string.city_pressure) + " "
-                        + mainData.get("pressure").toString() + " " + getString(R.string.hpa));
-                cityWind.setText(getString(R.string.city_wind) + " "
-                        + windData.get("speed").toString() + " " + getString(R.string.wind_unit));
+
+                cityTemp.setText(getString(R.string.city_temp, mainData.get("temp").toString()));
+                cityWeather.setText(getString(R.string.city_weather, weatherData.get("main").toString()));
+                cityHumidity.setText(getString(R.string.city_humidity, mainData.get("humidity").toString()));
+                cityPressure.setText(getString(R.string.city_pressure, mainData.get("pressure").toString()));
+                cityWind.setText(getString(R.string.city_wind, windData.get("speed").toString()));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-        else{
+        } else {
             cityTemp.setText(getText(R.string.error_dl_weather));
         }
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 }
 
@@ -98,8 +101,8 @@ class WeatherDownloader extends AsyncTask<Void, Void, Void> {
     private static final String API_URL = "http://api.openweathermap.org/data/2.5/weather?q=";
     private static final String API_UNITS_KEY = "&units=metric&APPID=609191e92beb5b9b8d10c2124c026211";
     private final OnDownloadListener listener;
-    private JSONObject data = null;
     private final String city;
+    private JSONObject data = null;
 
     public WeatherDownloader(OnDownloadListener listener, String city) {
         this.listener = listener;
@@ -133,7 +136,7 @@ class WeatherDownloader extends AsyncTask<Void, Void, Void> {
 
         } catch (Exception e) {
 
-            Log.d("Exception ",  e.getMessage());
+            Log.d("Exception ", e.getMessage());
         }
 
         return null;
@@ -148,7 +151,7 @@ class WeatherDownloader extends AsyncTask<Void, Void, Void> {
 
     }
 
-    protected interface OnDownloadListener {
+    interface OnDownloadListener {
         void OnDownloadFinish(JSONObject response);
     }
 }
