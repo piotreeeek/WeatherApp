@@ -48,7 +48,7 @@ public class WeatherActivity extends AppCompatActivity {
 
         assert bundle != null;
         String city = (String) bundle.get(SelectActivity.CITY_VARIABLE_NAME);
-        cityName.setText(getString(R.string.city_name,  city));
+        cityName.setText(getString(R.string.city_name, city));
 
         WeatherDownloader.OnDownloadListener downloadListener = new WeatherDownloader.OnDownloadListener() {
             @Override
@@ -72,7 +72,8 @@ public class WeatherActivity extends AppCompatActivity {
                 JSONObject weatherData = new JSONObject(weatherArray.get(0).toString());
                 JSONObject windData = new JSONObject(jsonObject.get("wind").toString());
 
-                Picasso.with(this).load(IMG_URL + weatherData.get("icon").toString() + ".png").into(cityIcon);
+                Picasso.with(this).load(IMG_URL + weatherData.get("icon").toString() + ".png")
+                        .into(cityIcon);
 
                 cityTemp.setText(getString(R.string.city_temp, mainData.get("temp").toString()));
                 cityWeather.setText(getString(R.string.city_weather, weatherData.get("main").toString()));
@@ -90,7 +91,8 @@ public class WeatherActivity extends AppCompatActivity {
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager
+                .getActiveNetworkInfo() : null;
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
