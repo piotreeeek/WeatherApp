@@ -5,16 +5,14 @@
     android:layout_height="match_parent"
     tools:context="com.example.piotrek.weatherapp.WeatherActivity">
 
-    <TextView
-        android:id="@+id/city_pressure"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/city_humidity" />
+
 
     <TextView
         android:id="@+id/city_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+
 
     <ImageView
         android:id="@+id/city_icon"
@@ -23,11 +21,7 @@
         android:layout_below="@id/city_name"
         android:contentDescription="@string/icon_name" />
 
-    <TextView
-        android:id="@+id/city_temp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/city_icon" />
+
 
     <TextView
         android:id="@+id/city_weather"
@@ -36,12 +30,22 @@
         android:layout_below="@id/city_icon" />
 
     <TextView
-        android:id="@+id/city_humidity"
+        android:id="@+id/city_temp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/city_weather" />
 
+    <TextView
+        android:id="@+id/city_humidity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/city_temp" />
 
+    <TextView
+        android:id="@+id/city_pressure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/city_humidity" />
 
     <TextView
         android:id="@+id/city_wind"
